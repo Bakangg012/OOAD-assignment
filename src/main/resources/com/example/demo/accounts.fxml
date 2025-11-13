@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml" fx:controller="com.example.demo.controllers.AccountsController">
+    <top>
+        <ToolBar>
+            <Button text="← Back to Dashboard" onAction="#backToDashboard" />
+            <Label text="Accounts" style="-fx-font-weight: bold;"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button text="Refresh" onAction="#refreshAccounts" />
+        </ToolBar>
+    </top>
+    <center>
+        <VBox spacing="10" alignment="CENTER">
+            <padding>
+                <Insets top="20" right="20" bottom="20" left="20"/>
+            </padding>
+            <Label text="Your Accounts" style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
+
+            <TableView fx:id="accountsTable" prefHeight="300">
+                <columns>
+                    <TableColumn text="Account Number" prefWidth="150"/>
+                    <TableColumn text="Type" prefWidth="100"/>
+                    <TableColumn text="Balance" prefWidth="120"/>
+                    <TableColumn text="Details" prefWidth="150"/>
+                </columns>
+            </TableView>
+
+            <HBox spacing="10" alignment="CENTER">
+                <Button text="View Details" onAction="#viewAccountDetails" />
+                <Button text="New Account" onAction="#createNewAccount" />
+            </HBox>
+        </VBox>
+    </center>
+</BorderPane>

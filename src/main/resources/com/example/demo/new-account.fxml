@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml" fx:controller="com.example.demo.controllers.NewAccountController">
+    <top>
+        <ToolBar>
+            <Button text="← Back to Dashboard" onAction="#backToDashboard" />
+            <Label text="Create New Account" style="-fx-font-weight: bold;"/>
+        </ToolBar>
+    </top>
+    <center>
+        <VBox spacing="15" alignment="CENTER" prefWidth="400">
+            <padding>
+                <Insets top="30" right="30" bottom="30" left="30"/>
+            </padding>
+
+            <Label text="Create New Account" style="-fx-font-size: 20px; -fx-font-weight: bold;"/>
+
+            <GridPane hgap="10" vgap="10">
+                <Label text="Account Type:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                <ComboBox fx:id="accountTypeCombo" promptText="Select account type" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+                <Label text="Initial Deposit:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                <TextField fx:id="initialDepositField" promptText="0.00" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+                <Label text="Special Feature:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                <TextField fx:id="specialFeatureField" promptText="Interest/Overdraft/Return Rate" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+            </GridPane>
+
+            <Button text="Create Account" onAction="#createAccount" style="-fx-font-size: 14px;"/>
+        </VBox>
+    </center>
+</BorderPane>

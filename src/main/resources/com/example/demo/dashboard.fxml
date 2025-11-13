@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml" fx:controller="com.example.demo.controllers.DashboardController">
+  <top>
+    <ToolBar>
+      <Label text="Banking System" style="-fx-font-weight: bold;"/>
+      <Region HBox.hgrow="ALWAYS"/>
+      <Button text="Accounts" onAction="#showAccounts" />
+      <Button text="Transactions" onAction="#showTransactions" />
+      <Button text="Profile" onAction="#showProfile" />
+      <Button text="Logout" onAction="#logout" />
+    </ToolBar>
+  </top>
+  <center>
+    <VBox alignment="CENTER" spacing="20.0">
+      <padding>
+        <Insets top="40" right="40" bottom="40" left="40"/>
+      </padding>
+      <Label fx:id="welcomeLabel" text="Welcome!" style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
+      <GridPane hgap="10" vgap="10">
+        <Button text="View Accounts" onAction="#showAccounts" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+        <Button text="New Account" onAction="#showNewAccount" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+        <Button text="Transactions" onAction="#showTransactions" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+        <Button text="Customer Profile" onAction="#showProfile" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+      </GridPane>
+    </VBox>
+  </center>
+</BorderPane>
