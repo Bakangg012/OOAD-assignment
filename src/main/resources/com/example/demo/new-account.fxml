@@ -7,7 +7,7 @@
 <BorderPane xmlns:fx="http://javafx.com/fxml" fx:controller="com.example.demo.controllers.NewAccountController">
     <top>
         <ToolBar>
-            <Button text="← Back to Dashboard" onAction="#backToDashboard" />
+            <Button text="← Back to Dashboard" onAction="#handleBackToDashboard" />
             <Label text="Create New Account" style="-fx-font-weight: bold;"/>
         </ToolBar>
     </top>
@@ -21,16 +21,23 @@
 
             <GridPane hgap="10" vgap="10">
                 <Label text="Account Type:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
-                <ComboBox fx:id="accountTypeCombo" promptText="Select account type" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+                <ChoiceBox fx:id="accountTypeChoice" GridPane.rowIndex="0" GridPane.columnIndex="1" prefWidth="200">
+                    <tooltip>
+                        <Tooltip text="Select account type"/>
+                    </tooltip>
+                </ChoiceBox>
 
                 <Label text="Initial Deposit:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
-                <TextField fx:id="initialDepositField" promptText="0.00" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+                <TextField fx:id="initialDepositField" promptText="0.00" GridPane.rowIndex="1" GridPane.columnIndex="1" prefWidth="200"/>
 
-                <Label text="Special Feature:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
-                <TextField fx:id="specialFeatureField" promptText="Interest/Overdraft/Return Rate" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+                <Label text="Employer Name:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                <TextField fx:id="employerNameField" promptText="Employer name" GridPane.rowIndex="2" GridPane.columnIndex="1" prefWidth="200"/>
+
+                <Label text="Employer Address:" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+                <TextField fx:id="employerAddressField" promptText="Employer address" GridPane.rowIndex="3" GridPane.columnIndex="1" prefWidth="200"/>
             </GridPane>
 
-            <Button text="Create Account" onAction="#createAccount" style="-fx-font-size: 14px;"/>
+            <Button text="Create Account" onAction="#handleOpenAccount" style="-fx-font-size: 14px; -fx-pref-width: 150px;"/>
         </VBox>
     </center>
 </BorderPane>

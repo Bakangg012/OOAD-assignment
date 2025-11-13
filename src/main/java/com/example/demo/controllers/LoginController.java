@@ -1,36 +1,61 @@
 package com.example.demo.controllers;
 
-import javafx.event.ActionEvent;
+import com.example.demo.Main;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
+import javafx.fxml.Initializable;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-import javafx.stage.Stage;
+import java.net.URL;
+import java.util.ResourceBundle;
 
-import java.io.IOException;
+public class LoginController implements Initializable {
 
-public class LoginController {
-    @FXML
-    private TextField usernameField;
-    @FXML
-    private PasswordField passwordField;
+    @FXML private TextField customerIdField;
+    @FXML private PasswordField pinField;
+    @FXML private Button loginButton;
+    @FXML private Button registerButton;
 
-    // dummy credentials: admin / 1234
-    @FXML
-    private void handleLogin(ActionEvent event) throws IOException {
-        String user = usernameField.getText();
-        String pass = passwordField.getText();
-        if ("admin".equals(user) && "1234".equals(pass)) {
-            Parent root = FXMLLoader.load(getClass().getResource("/com/example/demo/dashboard.fxml"));
-            Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
-            stage.setTitle("Banking System - Dashboard");
-            stage.setScene(new Scene(root));
-        } else {
-            // simple feedback by clearing password (minimal placeholder)
-            passwordField.clear();
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        loginButton.setOnAction(e -> handleLogin());
+        registerButton.setOnAction(e -> handleRegister());
+    }
+
+    private void handleLogin() {
+        String customerId = customerIdField.getText();
+        String pin = pinField.getText();
+
+        if (customerId.isEmpty() || pin.isEmpty()) {
+            showAlert("Error", "Please enter both Customer ID and PIN");
+            return;
         }
+
+        // Simple authentication for demo
+        if (authenticateUser(customerId, pin)) {
+            System.out.println("Login successful for: " + customerId);
+            Main.showDashboardScene();
+        } else {
+            showAlert("Login Failed", "Invalid Customer ID or PIN");
+        }
+    }
+
+    private void handleRegister() {
+        System.out.println("Opening registration form");
+        Main.showRegisterScene();
+    }
+
+    private boolean authenticateUser(String customerId, String pin) {
+        // Demo authentication - accept any input
+        return !customerId.isEmpty() && !pin.isEmpty();
+    }
+
+    private void showAlert(String title, String message) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
     }
 }

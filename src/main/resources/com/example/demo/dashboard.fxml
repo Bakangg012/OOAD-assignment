@@ -4,29 +4,57 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane xmlns:fx="http://javafx.com/fxml" fx:controller="com.example.demo.controllers.DashboardController">
-  <top>
-    <ToolBar>
-      <Label text="Banking System" style="-fx-font-weight: bold;"/>
-      <Region HBox.hgrow="ALWAYS"/>
-      <Button text="Accounts" onAction="#showAccounts" />
-      <Button text="Transactions" onAction="#showTransactions" />
-      <Button text="Profile" onAction="#showProfile" />
-      <Button text="Logout" onAction="#logout" />
-    </ToolBar>
-  </top>
-  <center>
-    <VBox alignment="CENTER" spacing="20.0">
-      <padding>
-        <Insets top="40" right="40" bottom="40" left="40"/>
-      </padding>
-      <Label fx:id="welcomeLabel" text="Welcome!" style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
-      <GridPane hgap="10" vgap="10">
-        <Button text="View Accounts" onAction="#showAccounts" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
-        <Button text="New Account" onAction="#showNewAccount" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
-        <Button text="Transactions" onAction="#showTransactions" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
-        <Button text="Customer Profile" onAction="#showProfile" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
-      </GridPane>
+<VBox xmlns:fx="http://javafx.com/fxml" fx:controller="com.example.demo.controllers.MainController"
+      spacing="20" alignment="TOP_CENTER" style="-fx-padding: 20;">
+
+  <!-- Header -->
+  <HBox spacing="20" alignment="CENTER" style="-fx-padding: 10; -fx-background-color: #f0f0f0;">
+    <Label text="Banking System Dashboard" style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
+    <Pane HBox.hgrow="ALWAYS"/>
+    <Button text="Logout" onAction="#handleLogout"
+            style="-fx-background-color: #f44336; -fx-text-fill: white; -fx-font-size: 14px;"/>
+  </HBox>
+
+  <!-- User Info Section -->
+  <VBox spacing="10" alignment="CENTER" style="-fx-padding: 20; -fx-border-color: #cccccc; -fx-border-width: 1; -fx-border-radius: 5;">
+    <Label fx:id="welcomeLabel" text="Welcome!" style="-fx-font-size: 20px; -fx-font-weight: bold;"/>
+    <Label fx:id="customerIdLabel" text="Customer ID:" style="-fx-font-size: 14px;"/>
+    <Label fx:id="accountNumberLabel" text="Account:" style="-fx-font-size: 12px;"/>
+    <Label fx:id="balanceLabel" text="Balance:" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #27ae60;"/>
+  </VBox>
+
+  <!-- Quick Actions -->
+  <VBox spacing="15" alignment="CENTER">
+    <Label text="Quick Actions" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+
+    <!-- First Row of Buttons -->
+    <HBox spacing="15" alignment="CENTER">
+      <Button text="Deposit" onAction="#handleDeposit"
+              style="-fx-pref-width: 120px; -fx-pref-height: 40px; -fx-background-color: #27ae60; -fx-text-fill: white;"/>
+      <Button text="Withdraw" onAction="#handleWithdraw"
+              style="-fx-pref-width: 120px; -fx-pref-height: 40px; -fx-background-color: #e74c3c; -fx-text-fill: white;"/>
+      <Button text="Transfer" onAction="#handleTransferFunds"
+              style="-fx-pref-width: 120px; -fx-pref-height: 40px; -fx-background-color: #3498db; -fx-text-fill: white;"/>
+    </HBox>
+
+    <!-- Second Row of Buttons -->
+    <HBox spacing="15" alignment="CENTER">
+      <Button text="Transactions" onAction="#handleViewTransactions"
+              style="-fx-pref-width: 140px; -fx-pref-height: 40px; -fx-background-color: #9b59b6; -fx-text-fill: white;"/>
+      <Button text="New Account" onAction="#handleNewAccount"
+              style="-fx-pref-width: 140px; -fx-pref-height: 40px; -fx-background-color: #f39c12; -fx-text-fill: white;"/>
+      <Button text="Settings" onAction="#handleAccountSettings"
+              style="-fx-pref-width: 140px; -fx-pref-height: 40px; -fx-background-color: #95a5a6; -fx-text-fill: white;"/>
+    </HBox>
+  </VBox>
+
+  <!-- Coming Soon Section -->
+  <VBox spacing="10" alignment="CENTER" style="-fx-padding: 15; -fx-background-color: #f8f9fa; -fx-border-color: #dee2e6; -fx-border-width: 1; -fx-border-radius: 5;">
+    <Label text="Coming Soon Features" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+    <VBox spacing="5" alignment="CENTER_LEFT">
+      <CheckBox text="Advanced Account Analytics"/>
+      <CheckBox text="Mobile Banking Integration"/>
+      <CheckBox text="Investment Portfolio"/>
     </VBox>
-  </center>
-</BorderPane>
+  </VBox>
+</VBox>

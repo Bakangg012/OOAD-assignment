@@ -3,17 +3,27 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
-<AnchorPane xmlns:fx="http://javafx.com/fxml" fx:controller="com.example.demo.controllers.LoginController">
-  <children>
-    <VBox alignment="CENTER" spacing="10.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" AnchorPane.bottomAnchor="0.0">
-      <padding>
-        <Insets top="40" right="40" bottom="40" left="40"/>
-      </padding>
-      <Label text="Banking System" style="-fx-font-size:18px; -fx-font-weight:bold;"/>
-      <TextField fx:id="usernameField" promptText="Username" />
-      <PasswordField fx:id="passwordField" promptText="Password" />
-      <Button text="Login" onAction="#handleLogin" />
-    </VBox>
-  </children>
+<AnchorPane xmlns="http://javafx.com/javafx/11.0.1"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.example.demo.controllers.LoginController"
+            prefHeight="600" prefWidth="800"
+            style="-fx-background-color: linear-gradient(to bottom, #2c3e50, #3498db);">
+
+  <!-- Your login form content here -->
+  <VBox alignment="CENTER" spacing="20" layoutX="250" layoutY="150" prefWidth="300">
+    <Label text="Banking System Login"
+           style="-fx-text-fill: white; -fx-font-size: 24px; -fx-font-weight: bold;"/>
+
+    <TextField fx:id="customerIdField" promptText="Customer ID"
+               style="-fx-pref-width: 250px; -fx-pref-height: 35px;"/>
+    <PasswordField fx:id="pinField" promptText="PIN"
+                   style="-fx-pref-width: 250px; -fx-pref-height: 35px;"/>
+
+    <Button fx:id="loginButton" text="Login"
+            style="-fx-background-color: #27ae60; -fx-text-fill: white; -fx-pref-width: 250px; -fx-pref-height: 35px;"/>
+    <Button fx:id="registerButton" text="Register New Customer"
+            style="-fx-background-color: #3498db; -fx-text-fill: white; -fx-pref-width: 250px; -fx-pref-height: 35px;"/>
+  </VBox>
 </AnchorPane>

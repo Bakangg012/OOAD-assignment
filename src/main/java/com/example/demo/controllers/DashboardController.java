@@ -1,66 +1,86 @@
 package com.example.demo.controllers;
 
-import javafx.event.ActionEvent;
+import com.example.demo.Main;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
+import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.stage.Stage;
+import java.net.URL;
+import java.util.ResourceBundle;
 
-import java.io.IOException;
+public class DashboardController implements Initializable {
 
-public class DashboardController {
-    @FXML
-    private Label welcomeLabel;
+    @FXML private Label welcomeLabel;
+    @FXML private Label customerIdLabel;
+    @FXML private Button logoutButton;
+    @FXML private Button newAccountButton;
+    @FXML private Button viewAccountsButton;
+    @FXML private Button depositButton;
+    @FXML private Button withdrawButton;
 
-    @FXML
-    public void initialize() {
-        welcomeLabel.setText("Welcome to Banking System Dashboard!");
+    private String currentCustomerId;
+    private String currentCustomerName;
+
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        // Set up button actions
+        logoutButton.setOnAction(e -> handleLogout());
+        newAccountButton.setOnAction(e -> handleNewAccount());
+        viewAccountsButton.setOnAction(e -> handleViewAccounts());
+        depositButton.setOnAction(e -> handleDeposit());
+        withdrawButton.setOnAction(e -> handleWithdraw());
+
+        loadCustomerData();
     }
 
-    // Navigation methods for all the buttons
-    @FXML
-    public void showAccounts(ActionEvent event) {
-        loadFXML("/com/example/demo/accounts.fxml", "Banking System - Accounts", event);
+    private void loadCustomerData() {
+        this.currentCustomerId = "CSE23012";
+        this.currentCustomerName = "Bakang Gabanthate";
+
+        welcomeLabel.setText("Welcome, " + currentCustomerName + "!");
+        customerIdLabel.setText("Customer ID: " + currentCustomerId);
     }
 
-    @FXML
-    public void showNewAccount(ActionEvent event) {
-        loadFXML("/com/example/demo/new-account.fxml", "Banking System - New Account", event);
+    private void handleLogout() {
+        System.out.println("Logging out customer: " + currentCustomerId);
+
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Logout");
+        alert.setHeaderText("Confirm Logout");
+        alert.setContentText("Are you sure you want to logout?");
+
+        alert.showAndWait().ifPresent(response -> {
+            if (response == javafx.scene.control.ButtonType.OK) {
+                clearSessionData();
+                Main.showLoginScene();
+            }
+        });
     }
 
-    @FXML
-    public void showTransactions(ActionEvent event) {
-        loadFXML("/com/example/demo/transactions.fxml", "Banking System - Transactions", event);
+    private void handleNewAccount() {
+        System.out.println("Opening new account form for: " + currentCustomerId);
+        showAlert("Coming Soon", "New Account feature will be available soon!");
     }
 
-    @FXML
-    public void showProfile(ActionEvent event) {
-        loadFXML("/com/example/demo/customer-profile.fxml", "Banking System - Profile", event);
+    private void handleViewAccounts() {
+        System.out.println("Viewing accounts for: " + currentCustomerId);
+        showAlert("Info", "View Accounts feature coming soon!");
     }
 
-    @FXML
-    public void logout(ActionEvent event) throws IOException {
-        Parent root = FXMLLoader.load(getClass().getResource("/com/example/demo/login.fxml"));
-        Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
-        stage.setScene(new Scene(root));
-        stage.setTitle("Banking System - Login");
+    private void handleDeposit() {
+        System.out.println("Deposit requested by: " + currentCustomerId);
+        showAlert("Info", "Deposit feature coming soon!");
     }
 
-    // Helper method to load FXML files
-    private void loadFXML(String fxmlPath, String title, ActionEvent event) {
-        try {
-            Parent root = FXMLLoader.load(getClass().getResource(fxmlPath));
-            Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
-            stage.setScene(new Scene(root));
-            stage.setTitle(title);
-        } catch (IOException e) {
-            showAlert("Navigation Error", "Could not load: " + fxmlPath + "\n\nThis feature is not fully implemented yet.");
-            e.printStackTrace();
-        }
+    private void handleWithdraw() {
+        System.out.println("Withdrawal requested by: " + currentCustomerId);
+        showAlert("Info", "Withdrawal feature coming soon!");
+    }
+
+    private void clearSessionData() {
+        this.currentCustomerId = null;
+        this.currentCustomerName = null;
     }
 
     private void showAlert(String title, String message) {
