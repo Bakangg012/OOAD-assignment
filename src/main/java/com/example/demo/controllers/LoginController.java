@@ -1,54 +1,76 @@
 package com.example.demo.controllers;
 
-import com.example.demo.Main;
+import com.example.demo.services.BankingService;
+import com.example.demo.models.Customer;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-import java.net.URL;
-import java.util.ResourceBundle;
+import javafx.stage.Stage;
+import java.io.IOException;
 
-public class LoginController implements Initializable {
+public class LoginController {
 
     @FXML private TextField customerIdField;
-    @FXML private PasswordField pinField;
-    @FXML private Button loginButton;
-    @FXML private Button registerButton;
+    @FXML private PasswordField passwordField;
 
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-        loginButton.setOnAction(e -> handleLogin());
-        registerButton.setOnAction(e -> handleRegister());
-    }
+    private BankingService bankingService = new BankingService();
 
+    @FXML
     private void handleLogin() {
-        String customerId = customerIdField.getText();
-        String pin = pinField.getText();
+        String customerId = customerIdField.getText().trim();
 
-        if (customerId.isEmpty() || pin.isEmpty()) {
-            showAlert("Error", "Please enter both Customer ID and PIN");
+        if (customerId.isEmpty()) {
+            showAlert("Error", "Please enter your Customer ID");
             return;
         }
 
-        // Simple authentication for demo
-        if (authenticateUser(customerId, pin)) {
-            System.out.println("Login successful for: " + customerId);
-            Main.showDashboardScene();
+        Customer customer = bankingService.findCustomerById(customerId);
+
+        if (customer != null) {
+            showDashboard(customer);
         } else {
-            showAlert("Login Failed", "Invalid Customer ID or PIN");
+            showAlert("Error", "Customer ID not found. Please try CUST001, CUST002, etc.");
         }
     }
 
+    @FXML
     private void handleRegister() {
-        System.out.println("Opening registration form");
-        Main.showRegisterScene();
+        // CORRECTED PATH - Remove "/views/" from the path
+        showScene("/com/example/demo/register.fxml", "Register New Customer");
     }
 
-    private boolean authenticateUser(String customerId, String pin) {
-        // Demo authentication - accept any input
-        return !customerId.isEmpty() && !pin.isEmpty();
+    private void showDashboard(Customer customer) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/demo/dashboard.fxml"));
+            Parent root = loader.load();
+
+            DashboardController controller = loader.getController();
+            controller.setCustomer(customer);
+            controller.setBankingService(bankingService);
+
+            Stage stage = (Stage) customerIdField.getScene().getWindow();
+            stage.setScene(new Scene(root, 800, 600));
+            stage.setTitle("Bank Dashboard - " + customer.getFirstName());
+
+        } catch (IOException e) {
+            showAlert("Error", "Cannot load dashboard: " + e.getMessage());
+        }
+    }
+
+    private void showScene(String fxmlPath, String title) {
+        try {
+            Parent root = FXMLLoader.load(getClass().getResource(fxmlPath));
+            Stage stage = (Stage) customerIdField.getScene().getWindow();
+            stage.setScene(new Scene(root, 800, 600));
+            stage.setTitle(title);
+        } catch (IOException e) {
+            showAlert("Error", "Cannot load scene: " + e.getMessage());
+            e.printStackTrace(); // Add this for debugging
+        }
     }
 
     private void showAlert(String title, String message) {

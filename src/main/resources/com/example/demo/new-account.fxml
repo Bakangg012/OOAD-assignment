@@ -1,43 +1,57 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.Insets?>
 
-<BorderPane xmlns:fx="http://javafx.com/fxml" fx:controller="com.example.demo.controllers.NewAccountController">
-    <top>
-        <ToolBar>
-            <Button text="← Back to Dashboard" onAction="#handleBackToDashboard" />
-            <Label text="Create New Account" style="-fx-font-weight: bold;"/>
-        </ToolBar>
-    </top>
-    <center>
-        <VBox spacing="15" alignment="CENTER" prefWidth="400">
-            <padding>
-                <Insets top="30" right="30" bottom="30" left="30"/>
-            </padding>
+<VBox xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.example.demo.controllers.NewAccountController"
+      spacing="20.0" style="-fx-padding: 20;">
 
-            <Label text="Create New Account" style="-fx-font-size: 20px; -fx-font-weight: bold;"/>
+    <Label text="Open New Account" style="-fx-font-size: 24; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
 
-            <GridPane hgap="10" vgap="10">
-                <Label text="Account Type:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
-                <ChoiceBox fx:id="accountTypeChoice" GridPane.rowIndex="0" GridPane.columnIndex="1" prefWidth="200">
-                    <tooltip>
-                        <Tooltip text="Select account type"/>
-                    </tooltip>
-                </ChoiceBox>
+    <VBox spacing="15.0" alignment="CENTER_LEFT"
+          style="-fx-background-color: white; -fx-padding: 30; -fx-background-radius: 10;">
 
-                <Label text="Initial Deposit:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
-                <TextField fx:id="initialDepositField" promptText="0.00" GridPane.rowIndex="1" GridPane.columnIndex="1" prefWidth="200"/>
+        <GridPane hgap="15.0" vgap="15.0">
+            <columnConstraints>
+                <ColumnConstraints halignment="RIGHT" minWidth="150.0"/>
+                <ColumnConstraints minWidth="250.0"/>
+            </columnConstraints>
 
-                <Label text="Employer Name:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
-                <TextField fx:id="employerNameField" promptText="Employer name" GridPane.rowIndex="2" GridPane.columnIndex="1" prefWidth="200"/>
+            <Label text="Account Type" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+            <ChoiceBox fx:id="accountTypeChoice" GridPane.rowIndex="0" GridPane.columnIndex="1"
+                       prefWidth="200"/>
 
-                <Label text="Employer Address:" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
-                <TextField fx:id="employerAddressField" promptText="Employer address" GridPane.rowIndex="3" GridPane.columnIndex="1" prefWidth="200"/>
-            </GridPane>
+            <Label text="Initial Deposit" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+            <TextField fx:id="initialDepositField" GridPane.rowIndex="1" GridPane.columnIndex="1"
+                       promptText="0.00"/>
 
-            <Button text="Create Account" onAction="#handleOpenAccount" style="-fx-font-size: 14px; -fx-pref-width: 150px;"/>
+            <!-- Cheque Account Fields (initially hidden) -->
+            <Label text="Employer" GridPane.rowIndex="2" GridPane.columnIndex="0" visible="false"/>
+            <TextField fx:id="employerField" GridPane.rowIndex="2" GridPane.columnIndex="1"
+                       promptText="Employer name" visible="false"/>
+
+            <Label text="Company Address" GridPane.rowIndex="3" GridPane.columnIndex="0" visible="false"/>
+            <TextField fx:id="companyAddressField" GridPane.rowIndex="3" GridPane.columnIndex="1"
+                       promptText="Company address" visible="false"/>
+        </GridPane>
+
+        <VBox spacing="10" style="-fx-padding: 15 0 0 0;">
+            <Label text="Account Types:" style="-fx-font-weight: bold;"/>
+            <Label text="• SAVINGS - Standard savings account" style="-fx-text-fill: #7f8c8d;"/>
+            <Label text="• INVESTMENT - Investment account with higher returns" style="-fx-text-fill: #7f8c8d;"/>
+            <Label text="• CHEQUE - Cheque account for business transactions" style="-fx-text-fill: #7f8c8d;"/>
         </VBox>
-    </center>
-</BorderPane>
+
+        <HBox spacing="10.0" alignment="CENTER_RIGHT" style="-fx-padding: 20 0 0 0;">
+            <Button text="Back" onAction="#handleBack"
+                    style="-fx-background-color: transparent; -fx-text-fill: #7f8c8d;"/>
+            <Button text="Create Account" onAction="#handleOpenAccount"
+                    style="-fx-background-color: #27ae60; -fx-text-fill: white; -fx-font-weight: bold;"/>
+        </HBox>
+
+        <Label fx:id="messageLabel" style="-fx-text-fill: #e74c3c; -fx-wrap-text: true;" visible="false"/>
+    </VBox>
+</VBox>

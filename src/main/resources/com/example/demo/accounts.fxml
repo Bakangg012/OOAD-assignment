@@ -1,38 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.Insets?>
 
-<BorderPane xmlns:fx="http://javafx.com/fxml" fx:controller="com.example.demo.controllers.AccountsController">
-    <top>
-        <ToolBar>
-            <Button text="← Back to Dashboard" onAction="#backToDashboard" />
-            <Label text="Accounts" style="-fx-font-weight: bold;"/>
-            <Region HBox.hgrow="ALWAYS"/>
-            <Button text="Refresh" onAction="#refreshAccounts" />
-        </ToolBar>
-    </top>
-    <center>
-        <VBox spacing="10" alignment="CENTER">
-            <padding>
-                <Insets top="20" right="20" bottom="20" left="20"/>
-            </padding>
-            <Label text="Your Accounts" style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
+<VBox xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1"
+      spacing="20.0" style="-fx-padding: 20;">
 
-            <TableView fx:id="accountsTable" prefHeight="300">
-                <columns>
-                    <TableColumn text="Account Number" prefWidth="150"/>
-                    <TableColumn text="Type" prefWidth="100"/>
-                    <TableColumn text="Balance" prefWidth="120"/>
-                    <TableColumn text="Details" prefWidth="150"/>
-                </columns>
-            </TableView>
+    <HBox alignment="CENTER_LEFT" spacing="10">
+        <Label text="Account Details" style="-fx-font-size: 24; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button fx:id="backButton" text="Back to Dashboard"
+                style="-fx-background-color: #3498db; -fx-text-fill: white;"/>
+    </HBox>
 
-            <HBox spacing="10" alignment="CENTER">
-                <Button text="View Details" onAction="#viewAccountDetails" />
-                <Button text="New Account" onAction="#createNewAccount" />
-            </HBox>
-        </VBox>
-    </center>
-</BorderPane>
+    <VBox spacing="15.0" alignment="CENTER_LEFT"
+          style="-fx-background-color: white; -fx-padding: 30; -fx-background-radius: 10;">
+
+        <Label fx:id="accountDetailsLabel" style="-fx-font-size: 18; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
+
+        <Separator style="-fx-padding: 10 0 10 0;"/>
+
+        <Label text="Recent Transactions" style="-fx-font-size: 16; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
+
+        <ListView fx:id="transactionListView" VBox.vgrow="ALWAYS"
+                  style="-fx-pref-height: 300; -fx-border-color: #bdc3c7; -fx-border-radius: 5;"/>
+
+        <HBox spacing="10" alignment="CENTER_RIGHT">
+            <Button fx:id="downloadStatementButton" text="Download Statement"
+                    style="-fx-background-color: #27ae60; -fx-text-fill: white; -fx-font-weight: bold;"/>
+        </HBox>
+    </VBox>
+</VBox>

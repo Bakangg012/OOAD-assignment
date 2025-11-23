@@ -1,39 +1,62 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.Insets?>
 
-<BorderPane xmlns:fx="http://javafx.com/fxml" fx:controller="com.example.demo.controllers.ProfileController">
-    <top>
-        <ToolBar>
-            <Button text="← Back to Dashboard" onAction="#backToDashboard" />
-            <Label text="Customer Profile" style="-fx-font-weight: bold;"/>
-        </ToolBar>
-    </top>
-    <center>
-        <VBox spacing="15" alignment="CENTER" prefWidth="400">
-            <padding>
-                <Insets top="30" right="30" bottom="30" left="30"/>
-            </padding>
+<VBox xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.example.demo.controllers.CustomerController"
+      spacing="20.0" style="-fx-padding: 20;">
 
-            <Label text="Your Profile" style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
+    <HBox alignment="CENTER_LEFT" spacing="10">
+        <Label text="Customer" style="-fx-font-size: 24; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button fx:id="editButton" text="Edit" onAction="#handleEdit"
+                style="-fx-background-color: #3498db; -fx-text-fill: white;"/>
+    </HBox>
 
-            <GridPane hgap="10" vgap="15">
-                <Label text="Customer ID:" style="-fx-font-weight: bold;" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
-                <Label fx:id="customerIdLabel" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+    <VBox spacing="15.0" alignment="CENTER_LEFT"
+          style="-fx-background-color: white; -fx-padding: 30; -fx-background-radius: 10;">
 
-                <Label text="Name:" style="-fx-font-weight: bold;" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
-                <Label fx:id="customerNameLabel" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+        <GridPane hgap="15.0" vgap="15.0">
+            <columnConstraints>
+                <ColumnConstraints halignment="RIGHT" minWidth="120.0"/>
+                <ColumnConstraints minWidth="250.0"/>
+            </columnConstraints>
 
-                <Label text="Total Accounts:" style="-fx-font-weight: bold;" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
-                <Label fx:id="totalAccountsLabel" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+            <Label text="ID" GridPane.rowIndex="0" GridPane.columnIndex="0" style="-fx-font-weight: bold;"/>
+            <Label fx:id="customerIdLabel" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
 
-                <Label text="Total Balance:" style="-fx-font-weight: bold;" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
-                <Label fx:id="totalBalanceLabel" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
-            </GridPane>
+            <Label text="First Name" GridPane.rowIndex="1" GridPane.columnIndex="0" style="-fx-font-weight: bold;"/>
+            <TextField fx:id="firstNameField" GridPane.rowIndex="1" GridPane.columnIndex="1" editable="false"/>
 
-            <Button text="Edit Profile" onAction="#editProfile" style="-fx-font-size: 14px;"/>
-        </VBox>
-    </center>
-</BorderPane>
+            <Label text="Last Name" GridPane.rowIndex="2" GridPane.columnIndex="0" style="-fx-font-weight: bold;"/>
+            <TextField fx:id="lastNameField" GridPane.rowIndex="2" GridPane.columnIndex="1" editable="false"/>
+
+            <Label text="Email" GridPane.rowIndex="3" GridPane.columnIndex="0" style="-fx-font-weight: bold;"/>
+            <TextField fx:id="emailField" GridPane.rowIndex="3" GridPane.columnIndex="1" editable="false"/>
+
+            <Label text="Phone" GridPane.rowIndex="4" GridPane.columnIndex="0" style="-fx-font-weight: bold;"/>
+            <TextField fx:id="phoneField" GridPane.rowIndex="4" GridPane.columnIndex="1" editable="false"/>
+
+            <Label text="Address" GridPane.rowIndex="5" GridPane.columnIndex="0" style="-fx-font-weight: bold;"/>
+            <TextArea fx:id="addressField" GridPane.rowIndex="5" GridPane.columnIndex="1" editable="false"
+                      prefRowCount="2" wrapText="true"/>
+
+            <Label text="Username" GridPane.rowIndex="6" GridPane.columnIndex="0" style="-fx-font-weight: bold;"/>
+            <TextField fx:id="usernameField" GridPane.rowIndex="6" GridPane.columnIndex="1" editable="false"/>
+        </GridPane>
+
+        <HBox spacing="10.0" alignment="CENTER_RIGHT" style="-fx-padding: 20 0 0 0;">
+            <Button fx:id="saveButton" text="Save" onAction="#handleSave"
+                    style="-fx-background-color: #27ae60; -fx-text-fill: white; -fx-font-weight: bold;"
+                    visible="false"/>
+            <Button fx:id="cancelButton" text="Cancel" onAction="#handleCancel"
+                    style="-fx-background-color: transparent; -fx-text-fill: #7f8c8d;"
+                    visible="false"/>
+        </HBox>
+
+        <Label fx:id="messageLabel" style="-fx-text-fill: #e74c3c; -fx-wrap-text: true;" visible="false"/>
+    </VBox>
+</VBox>

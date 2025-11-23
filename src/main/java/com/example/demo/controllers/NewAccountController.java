@@ -1,127 +1,84 @@
 package com.example.demo.controllers;
 
+import com.example.demo.services.BankingService;
+import com.example.demo.models.Customer;
+import com.example.demo.models.Account;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
-import javafx.scene.control.*;
-import java.net.URL;
-import java.util.ResourceBundle;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.TextField;
 
-public class NewAccountController implements Initializable {
+public class NewAccountController {
 
     @FXML private ChoiceBox<String> accountTypeChoice;
     @FXML private TextField initialDepositField;
-    @FXML private TextField employerNameField;
-    @FXML private TextField employerAddressField;
+    @FXML private TextField employerField;
+    @FXML private TextField companyAddressField;
 
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-        // Set up account types
-        accountTypeChoice.getItems().addAll("Savings Account", "Investment Account", "Cheque Account");
-        accountTypeChoice.setValue("Savings Account");
+    private BankingService bankingService;
+    private Customer customer;
 
-        // Show/hide employment fields based on account type
-        accountTypeChoice.setOnAction(e -> toggleEmploymentFields());
-        toggleEmploymentFields(); // Initial state
+    public void setBankingService(BankingService bankingService) {
+        this.bankingService = bankingService;
     }
 
-    private void toggleEmploymentFields() {
-        String selectedType = accountTypeChoice.getValue();
-        boolean isChequeAccount = "Cheque Account".equals(selectedType);
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
+        initialize();
+    }
 
-        employerNameField.setVisible(isChequeAccount);
-        employerAddressField.setVisible(isChequeAccount);
+    private void initialize() {
+        accountTypeChoice.getItems().addAll("SAVINGS", "INVESTMENT", "CHEQUE");
+        accountTypeChoice.setValue("SAVINGS");
 
-        // Also manage the labels if they exist
-        // You might want to add fx:id to labels in FXML for complete control
+        // Show/hide cheque account fields based on selection
+        accountTypeChoice.valueProperty().addListener((obs, oldVal, newVal) -> {
+            boolean isCheque = "CHEQUE".equals(newVal);
+            employerField.setVisible(isCheque);
+            companyAddressField.setVisible(isCheque);
+        });
     }
 
     @FXML
     private void handleOpenAccount() {
-        String accountType = accountTypeChoice.getValue();
-        String initialDepositText = initialDepositField.getText();
+        try {
+            String accountType = accountTypeChoice.getValue();
+            double initialDeposit = Double.parseDouble(initialDepositField.getText());
 
-        if (!validateAccountOpening(accountType, initialDepositText)) {
-            return;
-        }
+            Account newAccount;
 
-        double initialDeposit = Double.parseDouble(initialDepositText);
-        String employerName = employerNameField.getText();
-        String employerAddress = employerAddressField.getText();
+            switch (accountType) {
+                case "SAVINGS":
+                    newAccount = bankingService.openSavingsAccount(customer, "Main Branch", initialDeposit);
+                    break;
+                case "INVESTMENT":
+                    newAccount = bankingService.openInvestmentAccount(customer, "Main Branch", initialDeposit);
+                    break;
+                case "CHEQUE":
+                    String employer = employerField.getText();
+                    String companyAddress = companyAddressField.getText();
+                    newAccount = bankingService.openChequeAccount(customer, "Main Branch", employer, companyAddress, initialDeposit);
+                    break;
+                default:
+                    throw new IllegalArgumentException("Invalid account type");
+            }
 
-        // Create new account
-        boolean success = createNewAccount(accountType, initialDeposit, employerName, employerAddress);
+            showAlert("Success", "New " + accountType + " account opened successfully!\nAccount Number: " + newAccount.getAccountNumber());
+            handleBack();
 
-        if (success) {
-            showSuccessAlert("Account Opened",
-                    "Your new " + accountType + " has been opened successfully!\n" +
-                            "Initial Deposit: BWP " + initialDeposit);
-            // Main.showDashboardScene();
-        } else {
-            showAlert("Account Opening Failed", "Error opening account. Please try again.");
+        } catch (NumberFormatException e) {
+            showAlert("Error", "Please enter a valid initial deposit amount");
+        } catch (Exception e) {
+            showAlert("Error", "Account opening failed: " + e.getMessage());
         }
     }
 
     @FXML
-    private void handleBackToDashboard() {
-        // Main.showDashboardScene();
-        System.out.println("Back to dashboard clicked");
-    }
-
-    private boolean validateAccountOpening(String accountType, String initialDepositText) {
-        // Your validation logic here
-        if (initialDepositText.isEmpty()) {
-            showAlert("Validation Error", "Please enter initial deposit amount.");
-            return false;
-        }
-
-        try {
-            double deposit = Double.parseDouble(initialDepositText);
-
-            if (deposit <= 0) {
-                showAlert("Validation Error", "Initial deposit must be positive.");
-                return false;
-            }
-
-            if ("Investment Account".equals(accountType) && deposit < 500.0) {
-                showAlert("Validation Error", "Investment Account requires minimum deposit of BWP 500.00");
-                return false;
-            }
-
-            if ("Cheque Account".equals(accountType) &&
-                    (employerNameField.getText().isEmpty() || employerAddressField.getText().isEmpty())) {
-                showAlert("Validation Error", "Cheque Account requires employer information.");
-                return false;
-            }
-
-        } catch (NumberFormatException e) {
-            showAlert("Validation Error", "Please enter a valid deposit amount.");
-            return false;
-        }
-
-        return true;
-    }
-
-    private boolean createNewAccount(String accountType, double initialDeposit,
-                                     String employerName, String employerAddress) {
-        // TODO: Implement database save for new account
-        System.out.println("Creating new " + accountType + " with deposit: BWP " + initialDeposit);
-
-        if ("Cheque Account".equals(accountType)) {
-            System.out.println("Employer: " + employerName + ", Address: " + employerAddress);
-        }
-
-        return true; // Simulate success
+    private void handleBack() {
+        showAlert("Info", "Back to Dashboard");
     }
 
     private void showAlert(String title, String message) {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
-    }
-
-    private void showSuccessAlert(String title, String message) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(title);
         alert.setHeaderText(null);

@@ -1,86 +1,185 @@
 package com.example.demo.controllers;
 
-import com.example.demo.Main;
+import com.example.demo.services.BankingService;
+import com.example.demo.models.Customer;
+import com.example.demo.models.Account;
+import com.example.demo.models.InsufficientFundsException;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import java.net.URL;
-import java.util.ResourceBundle;
+import javafx.scene.control.ListView;
+import javafx.scene.control.TextField;
+import javafx.stage.Stage;
+import java.io.IOException;
+import java.util.Optional;
+import javafx.scene.control.ButtonType;
 
-public class DashboardController implements Initializable {
+public class DashboardController {
 
     @FXML private Label welcomeLabel;
-    @FXML private Label customerIdLabel;
-    @FXML private Button logoutButton;
-    @FXML private Button newAccountButton;
-    @FXML private Button viewAccountsButton;
-    @FXML private Button depositButton;
-    @FXML private Button withdrawButton;
+    @FXML private Label customerInfoLabel;
+    @FXML private ListView<String> accountsListView;
+    @FXML private TextField depositAmountField;
+    @FXML private TextField withdrawAmountField;
+    @FXML private Label selectedAccountLabel;
 
-    private String currentCustomerId;
-    private String currentCustomerName;
+    private Customer customer;
+    private BankingService bankingService;
+    private Account selectedAccount;
 
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-        // Set up button actions
-        logoutButton.setOnAction(e -> handleLogout());
-        newAccountButton.setOnAction(e -> handleNewAccount());
-        viewAccountsButton.setOnAction(e -> handleViewAccounts());
-        depositButton.setOnAction(e -> handleDeposit());
-        withdrawButton.setOnAction(e -> handleWithdraw());
-
-        loadCustomerData();
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
+        updateDisplay();
     }
 
-    private void loadCustomerData() {
-        this.currentCustomerId = "CSE23012";
-        this.currentCustomerName = "Bakang Gabanthate";
-
-        welcomeLabel.setText("Welcome, " + currentCustomerName + "!");
-        customerIdLabel.setText("Customer ID: " + currentCustomerId);
+    public void setBankingService(BankingService bankingService) {
+        this.bankingService = bankingService;
     }
 
-    private void handleLogout() {
-        System.out.println("Logging out customer: " + currentCustomerId);
-
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle("Logout");
-        alert.setHeaderText("Confirm Logout");
-        alert.setContentText("Are you sure you want to logout?");
-
-        alert.showAndWait().ifPresent(response -> {
-            if (response == javafx.scene.control.ButtonType.OK) {
-                clearSessionData();
-                Main.showLoginScene();
-            }
-        });
+    private void updateDisplay() {
+        if (customer != null) {
+            welcomeLabel.setText("Welcome, " + customer.getFirstName() + "!");
+            customerInfoLabel.setText("Customer ID: " + customer.getCustomerId() +
+                    " | Phone: " + customer.getPhone());
+            loadAccounts();
+        }
     }
 
-    private void handleNewAccount() {
-        System.out.println("Opening new account form for: " + currentCustomerId);
-        showAlert("Coming Soon", "New Account feature will be available soon!");
+    private void loadAccounts() {
+        accountsListView.getItems().clear();
+        for (Account account : customer.getAccounts()) {
+            String accountInfo = String.format("%s: %s - BWP%.2f",
+                    account.getAccountType(),
+                    account.getAccountNumber(),
+                    account.getBalance());
+            accountsListView.getItems().add(accountInfo);
+        }
+
+        if (!customer.getAccounts().isEmpty()) {
+            accountsListView.getSelectionModel().select(0);
+            selectAccount();
+        }
     }
 
-    private void handleViewAccounts() {
-        System.out.println("Viewing accounts for: " + currentCustomerId);
-        showAlert("Info", "View Accounts feature coming soon!");
+    @FXML
+    private void selectAccount() {
+        int selectedIndex = accountsListView.getSelectionModel().getSelectedIndex();
+        if (selectedIndex >= 0 && selectedIndex < customer.getAccounts().size()) {
+            selectedAccount = customer.getAccounts().get(selectedIndex);
+            selectedAccountLabel.setText("Selected: " + selectedAccount.getAccountType() +
+                    " - " + selectedAccount.getAccountNumber());
+        }
     }
 
+    @FXML
     private void handleDeposit() {
-        System.out.println("Deposit requested by: " + currentCustomerId);
-        showAlert("Info", "Deposit feature coming soon!");
+        if (selectedAccount == null) {
+            showAlert("Error", "Please select an account first");
+            return;
+        }
+
+        try {
+            double amount = Double.parseDouble(depositAmountField.getText());
+            if (amount <= 0) {
+                showAlert("Error", "Deposit amount must be positive");
+                return;
+            }
+
+            bankingService.deposit(selectedAccount, amount);
+            showAlert("Success", "Deposited BWP" + amount + " successfully");
+            updateDisplay();
+            depositAmountField.clear();
+
+        } catch (NumberFormatException e) {
+            showAlert("Error", "Please enter a valid amount");
+        } catch (Exception e) {
+            showAlert("Error", "Deposit failed: " + e.getMessage());
+        }
     }
 
+    @FXML
     private void handleWithdraw() {
-        System.out.println("Withdrawal requested by: " + currentCustomerId);
-        showAlert("Info", "Withdrawal feature coming soon!");
+        if (selectedAccount == null) {
+            showAlert("Error", "Please select an account first");
+            return;
+        }
+
+        try {
+            double amount = Double.parseDouble(withdrawAmountField.getText());
+            if (amount <= 0) {
+                showAlert("Error", "Withdrawal amount must be positive");
+                return;
+            }
+
+            bankingService.withdraw(selectedAccount, amount);
+            showAlert("Success", "Withdrawn BWP" + amount + " successfully");
+            updateDisplay();
+            withdrawAmountField.clear();
+
+        } catch (NumberFormatException e) {
+            showAlert("Error", "Please enter a valid amount");
+        } catch (InsufficientFundsException e) {
+            showAlert("Error", "Withdrawal failed: " + e.getMessage());
+        } catch (Exception e) {
+            showAlert("Error", "Withdrawal failed: " + e.getMessage());
+        }
     }
 
-    private void clearSessionData() {
-        this.currentCustomerId = null;
-        this.currentCustomerName = null;
+    @FXML
+    private void handleViewTransactions() {
+        if (selectedAccount != null) {
+            showAlert("Info", "Transaction history for " + selectedAccount.getAccountNumber() + " would appear here");
+        } else {
+            showAlert("Error", "Please select an account first");
+        }
+    }
+
+    @FXML
+    private void handleOpenNewAccount() {
+        showScene("/com/example/demo/views/NewAccountView.fxml", "Open New Account");
+    }
+
+    @FXML
+    private void handleManageProfile() {
+        showScene("/com/example/demo/views/CustomerView.fxml", "Manage Profile");
+    }
+
+    @FXML
+    private void handleLogout() {
+        try {
+            // Show logout confirmation
+            Alert confirmAlert = new Alert(Alert.AlertType.CONFIRMATION);
+            confirmAlert.setTitle("Logout");
+            confirmAlert.setHeaderText("Are you sure you want to logout?");
+            confirmAlert.setContentText("You will be redirected to the login screen.");
+
+            Optional<ButtonType> result = confirmAlert.showAndWait();
+            if (result.isPresent() && result.get() == ButtonType.OK) {
+                // Load login screen
+                Parent root = FXMLLoader.load(getClass().getResource("/com/example/demo/views/LoginView.fxml"));
+                Stage stage = (Stage) welcomeLabel.getScene().getWindow();
+                stage.setScene(new Scene(root, 800, 600));
+                stage.setTitle("Banking System - Login");
+
+                showAlert("Success", "Logged out successfully!");
+            }
+        } catch (IOException e) {
+            showAlert("Error", "Logout failed: " + e.getMessage());
+        }
+    }
+
+    private void showScene(String fxmlPath, String title) {
+        try {
+            Parent root = FXMLLoader.load(getClass().getResource(fxmlPath));
+            Stage stage = (Stage) welcomeLabel.getScene().getWindow();
+            stage.setScene(new Scene(root, 800, 600));
+            stage.setTitle(title);
+        } catch (IOException e) {
+            showAlert("Error", "Cannot load scene: " + e.getMessage());
+        }
     }
 
     private void showAlert(String title, String message) {

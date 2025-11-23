@@ -1,29 +1,43 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
+<?import javafx.geometry.Insets?>
 
-<AnchorPane xmlns="http://javafx.com/javafx/11.0.1"
-            xmlns:fx="http://javafx.com/fxml/1"
+<BorderPane xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.example.demo.controllers.LoginController"
-            prefHeight="600" prefWidth="800"
-            style="-fx-background-color: linear-gradient(to bottom, #2c3e50, #3498db);">
+            prefHeight="400.0" prefWidth="600.0"
+            style="-fx-background-color: #f5f5f5;">
 
-  <!-- Your login form content here -->
-  <VBox alignment="CENTER" spacing="20" layoutX="250" layoutY="150" prefWidth="300">
-    <Label text="Banking System Login"
-           style="-fx-text-fill: white; -fx-font-size: 24px; -fx-font-weight: bold;"/>
+  <center>
+    <VBox alignment="CENTER" spacing="20.0" prefWidth="300.0">
+      <padding>
+        <Insets top="40.0" right="40.0" bottom="40.0" left="40.0"/>
+      </padding>
 
-    <TextField fx:id="customerIdField" promptText="Customer ID"
-               style="-fx-pref-width: 250px; -fx-pref-height: 35px;"/>
-    <PasswordField fx:id="pinField" promptText="PIN"
-                   style="-fx-pref-width: 250px; -fx-pref-height: 35px;"/>
+      <Text text="Banking System" style="-fx-font-size: 24; -fx-font-weight: bold; -fx-fill: #2c3e50;"/>
 
-    <Button fx:id="loginButton" text="Login"
-            style="-fx-background-color: #27ae60; -fx-text-fill: white; -fx-pref-width: 250px; -fx-pref-height: 35px;"/>
-    <Button fx:id="registerButton" text="Register New Customer"
-            style="-fx-background-color: #3498db; -fx-text-fill: white; -fx-pref-width: 250px; -fx-pref-height: 35px;"/>
-  </VBox>
-</AnchorPane>
+      <VBox spacing="15.0" alignment="CENTER_LEFT" style="-fx-background-color: white; -fx-padding: 30; -fx-background-radius: 10;">
+        <Label text="Login" style="-fx-font-size: 20; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
+
+        <VBox spacing="10.0">
+          <Label text="Customer ID"/>
+          <TextField fx:id="customerIdField" promptText="Enter your Customer ID"/>
+
+          <Label text="Password"/>
+          <PasswordField fx:id="passwordField" promptText="Enter password"/>
+        </VBox>
+
+        <HBox spacing="10.0" alignment="CENTER_RIGHT">
+          <Button fx:id="registerButton" text="Register" onAction="#handleRegister"
+                  style="-fx-background-color: transparent; -fx-text-fill: #3498db;"/>
+          <Button fx:id="loginButton" text="Login" onAction="#handleLogin"
+                  style="-fx-background-color: #3498db; -fx-text-fill: white; -fx-font-weight: bold;"/>
+        </HBox>
+
+        <Label fx:id="errorLabel" style="-fx-text-fill: #e74c3c; -fx-wrap-text: true;" visible="false"/>
+      </VBox>
+    </VBox>
+  </center>
+</BorderPane>
