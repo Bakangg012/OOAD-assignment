@@ -6,6 +6,7 @@ public abstract class Account {
     protected Customer customer;
     protected String branch;
 
+    // Constructor for NEW accounts
     public Account(Customer customer, String branch) {
         this.accountNumber = "ACC" + System.currentTimeMillis();
         this.balance = 0.0;
@@ -13,9 +14,10 @@ public abstract class Account {
         this.branch = branch;
     }
 
+    // Constructor for EXISTING accounts from database
     public Account(String accountNumber, double balance, Customer customer, String branch) {
         this.accountNumber = accountNumber;
-        this.balance = balance;
+        this.balance = balance; // This sets the balance directly
         this.customer = customer;
         this.branch = branch;
     }
@@ -36,5 +38,8 @@ public abstract class Account {
     public Customer getCustomer() { return customer; }
     public String getBranch() { return branch; }
 
-    protected void setBalance(double balance) { this.balance = balance; }
+    // Setter for balance - used by account subclasses
+    protected void setBalance(double balance) {
+        this.balance = balance;
+    }
 }

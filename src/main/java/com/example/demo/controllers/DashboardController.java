@@ -26,10 +26,19 @@ public class DashboardController {
     @FXML private TextField depositAmountField;
     @FXML private TextField withdrawAmountField;
     @FXML private Label selectedAccountLabel;
+    @FXML private Label totalBalanceLabel;
 
     private Customer customer;
     private BankingServiceDAO bankingService = Main.getBankingService();
     private Account selectedAccount;
+
+    @FXML
+    private void initialize() {
+        // Set up list view selection listener
+        accountsListView.getSelectionModel().selectedItemProperty().addListener(
+                (observable, oldValue, newValue) -> selectAccount()
+        );
+    }
 
     public void setCustomer(Customer customer) {
         this.customer = customer;
@@ -42,32 +51,48 @@ public class DashboardController {
             customerInfoLabel.setText("Customer ID: " + customer.getCustomerId() +
                     " | Phone: " + customer.getPhone());
             loadAccounts();
+            updateTotalBalance();
         }
     }
 
     private void loadAccounts() {
         accountsListView.getItems().clear();
+        System.out.println("Loading accounts for customer: " + customer.getFullName());
+        System.out.println("Number of accounts: " + customer.getAccounts().size());
+
         for (Account account : customer.getAccounts()) {
             String accountInfo = String.format("%s: %s - BWP%.2f",
                     account.getAccountType(),
                     account.getAccountNumber(),
                     account.getBalance());
             accountsListView.getItems().add(accountInfo);
+            System.out.println("Added account to list: " + accountInfo);
         }
 
         if (!customer.getAccounts().isEmpty()) {
             accountsListView.getSelectionModel().select(0);
             selectAccount();
+        } else {
+            selectedAccountLabel.setText("No accounts available");
+            selectedAccount = null;
         }
     }
 
-    @FXML
+    private void updateTotalBalance() {
+        double total = 0.0;
+        for (Account account : customer.getAccounts()) {
+            total += account.getBalance();
+        }
+        totalBalanceLabel.setText(String.format("Total Balance: BWP%.2f", total));
+    }
+
     private void selectAccount() {
         int selectedIndex = accountsListView.getSelectionModel().getSelectedIndex();
         if (selectedIndex >= 0 && selectedIndex < customer.getAccounts().size()) {
             selectedAccount = customer.getAccounts().get(selectedIndex);
             selectedAccountLabel.setText("Selected: " + selectedAccount.getAccountType() +
                     " - " + selectedAccount.getAccountNumber());
+            System.out.println("Selected account: " + selectedAccount.getAccountNumber());
         }
     }
 
@@ -86,7 +111,7 @@ public class DashboardController {
             }
 
             bankingService.deposit(selectedAccount, amount);
-            showAlert("Success", "Deposited BWP" + amount + " successfully");
+            showAlert("Success", "Deposited BWP" + amount + " successfully to account " + selectedAccount.getAccountNumber());
             updateDisplay();
             depositAmountField.clear();
 
@@ -112,7 +137,7 @@ public class DashboardController {
             }
 
             bankingService.withdraw(selectedAccount, amount);
-            showAlert("Success", "Withdrawn BWP" + amount + " successfully");
+            showAlert("Success", "Withdrawn BWP" + amount + " successfully from account " + selectedAccount.getAccountNumber());
             updateDisplay();
             withdrawAmountField.clear();
 
@@ -126,17 +151,17 @@ public class DashboardController {
     }
 
     @FXML
+    private void handleRefresh() {
+        updateDisplay();
+        showAlert("Info", "Accounts list refreshed");
+    }
+
+    @FXML
     private void handleViewTransactions() {
         if (selectedAccount != null) {
             try {
-                // CORRECTED: Using transactions.fxml instead of TransactionView.fxml
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/demo/transactions.fxml"));
                 Parent root = loader.load();
-
-                // You'll need to create a TransactionsController that matches your FXML
-                // TransactionController controller = loader.getController();
-                // controller.setAccount(selectedAccount);
-
                 Stage stage = (Stage) welcomeLabel.getScene().getWindow();
                 stage.setScene(new Scene(root, 800, 600));
                 stage.setTitle("Transaction History - " + selectedAccount.getAccountNumber());
@@ -152,7 +177,6 @@ public class DashboardController {
     @FXML
     private void handleOpenNewAccount() {
         try {
-            // CORRECTED: Using new-account.fxml instead of NewAccountView.fxml
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/demo/new-account.fxml"));
             Parent root = loader.load();
 
@@ -171,14 +195,8 @@ public class DashboardController {
     @FXML
     private void handleManageProfile() {
         try {
-            // CORRECTED: Using customer-profile.fxml instead of CustomerView.fxml
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/demo/customer-profile.fxml"));
             Parent root = loader.load();
-
-            // You'll need to create a CustomerProfileController that matches your FXML
-            // CustomerController controller = loader.getController();
-            // controller.setCustomer(customer);
-
             Stage stage = (Stage) welcomeLabel.getScene().getWindow();
             stage.setScene(new Scene(root, 800, 600));
             stage.setTitle("Manage Profile - " + customer.getFirstName());
@@ -190,22 +208,9 @@ public class DashboardController {
 
     @FXML
     private void handleViewAccounts() {
-        try {
-            // Using accounts.fxml for viewing all accounts
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/demo/accounts.fxml"));
-            Parent root = loader.load();
-
-            // You'll need to create an AccountsController
-            // AccountsController controller = loader.getController();
-            // controller.setCustomer(customer);
-
-            Stage stage = (Stage) welcomeLabel.getScene().getWindow();
-            stage.setScene(new Scene(root, 800, 600));
-            stage.setTitle("All Accounts - " + customer.getFirstName());
-        } catch (IOException e) {
-            e.printStackTrace();
-            showAlert("Error", "Cannot load accounts view: " + e.getMessage());
-        }
+        // Refresh the current view
+        updateDisplay();
+        showAlert("Info", "Accounts view refreshed");
     }
 
     @FXML

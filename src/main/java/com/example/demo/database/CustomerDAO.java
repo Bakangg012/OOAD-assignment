@@ -48,6 +48,26 @@ public class CustomerDAO {
         return null;
     }
 
+    // ADD THIS MISSING METHOD
+    public Customer findCustomerById(String customerId) {
+        String sql = "SELECT * FROM customers WHERE id = ?";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, customerId);
+            ResultSet rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                return resultSetToCustomer(rs);
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Error finding customer by ID: " + e.getMessage());
+        }
+        return null;
+    }
+
     public List<Customer> getAllCustomers() {
         List<Customer> customers = new ArrayList<>();
         String sql = "SELECT * FROM customers";
@@ -97,8 +117,8 @@ public class CustomerDAO {
                 rs.getString("phone"),
                 rs.getString("password")
         );
-        // Set the original ID
-        // Note: You might need to add a setCustomerId method to your Customer class
+        // Set the original ID - CRITICAL FIX
+        customer.setCustomerId(rs.getString("id"));
         return customer;
     }
 }

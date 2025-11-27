@@ -1,6 +1,9 @@
 package com.example.demo.controllers;
 
+import com.example.demo.Main;
+import com.example.demo.services.BankingServiceDAO;
 import com.example.demo.models.Customer;
+import com.example.demo.models.Account;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -26,10 +29,6 @@ public class NewAccountController {
     @FXML
     private Label messageLabel;
 
-    // Remove mainContainer since it's not in your FXML
-    // @FXML
-    // private VBox mainContainer;
-
     @FXML
     private Label employerLabel;
 
@@ -37,6 +36,7 @@ public class NewAccountController {
     private Label companyAddressLabel;
 
     private Customer customer;
+    private BankingServiceDAO bankingService = Main.getBankingService();
 
     public void setCustomer(Customer customer) {
         this.customer = customer;
@@ -50,8 +50,6 @@ public class NewAccountController {
 
         // Initialize account types
         accountTypeChoice.getItems().addAll("SAVINGS", "INVESTMENT", "CHEQUE");
-
-        // Set default selection
         accountTypeChoice.setValue("SAVINGS");
 
         // Add listener to show/hide cheque account fields
@@ -141,8 +139,14 @@ public class NewAccountController {
                 return;
             }
 
+            // Account-specific validation
+            if ("INVESTMENT".equals(accountType) && initialDeposit < 500.0) {
+                showMessage("Investment account requires minimum BWP 500.00", true);
+                return;
+            }
+
             if (initialDeposit < 10.0) {
-                showMessage("Minimum initial deposit is $10.00", true);
+                showMessage("Minimum initial deposit is BWP 10.00", true);
                 return;
             }
 
@@ -154,25 +158,56 @@ public class NewAccountController {
                 }
             }
 
-            // Here you would call your banking service to create the account
-            System.out.println("Creating " + accountType + " account for customer: " +
-                    customer.getFullName() + " with deposit: $" + initialDeposit);
+            // Create the account using BankingServiceDAO
+            Account newAccount = null;
+            String branch = "Main Branch"; // You can make this a field if needed
 
-            if ("CHEQUE".equals(accountType)) {
-                System.out.println("Employer: " + employerField.getText());
-                System.out.println("Company Address: " + companyAddressField.getText());
+            switch (accountType) {
+                case "SAVINGS":
+                    newAccount = bankingService.openSavingsAccount(customer, branch, initialDeposit);
+                    break;
+                case "INVESTMENT":
+                    newAccount = bankingService.openInvestmentAccount(customer, branch, initialDeposit);
+                    break;
+                case "CHEQUE":
+                    newAccount = bankingService.openChequeAccount(customer, branch,
+                            employerField.getText().trim(),
+                            companyAddressField.getText().trim(),
+                            initialDeposit);
+                    break;
             }
 
-            // FIXED: Using getFullName() instead of getLastName()
-            String successMessage = String.format(
-                    "Account created successfully!\nCustomer: %s\nType: %s\nInitial Deposit: $%.2f",
-                    customer.getFullName(), accountType, initialDeposit
-            );
+            if (newAccount != null) {
+                String successMessage = String.format(
+                        "Account created successfully!\n" +
+                                "Account Number: %s\n" +
+                                "Type: %s\n" +
+                                "Initial Deposit: BWP%.2f\n" +
+                                "Customer: %s",
+                        newAccount.getAccountNumber(),
+                        newAccount.getAccountType(),
+                        initialDeposit,
+                        customer.getFullName()
+                );
 
-            showMessage(successMessage, false);
+                showMessage(successMessage, false);
 
-            // Clear form after successful creation
-            clearForm();
+                // Wait a moment then return to dashboard
+                new java.util.Timer().schedule(
+                        new java.util.TimerTask() {
+                            @Override
+                            public void run() {
+                                javafx.application.Platform.runLater(() -> {
+                                    returnToDashboard();
+                                });
+                            }
+                        },
+                        2000 // 2 second delay
+                );
+
+            } else {
+                showMessage("Failed to create account. Please try again.", true);
+            }
 
         } catch (NumberFormatException e) {
             showMessage("Please enter a valid deposit amount", true);
@@ -184,18 +219,19 @@ public class NewAccountController {
 
     @FXML
     private void handleBack() {
+        returnToDashboard();
+    }
+
+    private void returnToDashboard() {
         try {
             System.out.println("Returning to dashboard...");
 
-            // Load the dashboard
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/demo/dashboard.fxml"));
             Parent dashboardRoot = loader.load();
 
-            // Set the customer in the dashboard controller
             DashboardController dashboardController = loader.getController();
             dashboardController.setCustomer(customer);
 
-            // FIXED: Use initialDepositField to get the scene instead of mainContainer
             Stage currentStage = (Stage) initialDepositField.getScene().getWindow();
             currentStage.setScene(new Scene(dashboardRoot, 800, 600));
             currentStage.setTitle("Banking Dashboard - " + customer.getFullName());

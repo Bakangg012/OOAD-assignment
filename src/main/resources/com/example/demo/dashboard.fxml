@@ -19,12 +19,21 @@
             style="-fx-background-color: #e74c3c; -fx-text-fill: white;"/>
   </HBox>
 
+  <!-- Total Balance & Refresh -->
+  <HBox spacing="10" alignment="CENTER_LEFT">
+    <Label fx:id="totalBalanceLabel" text="Total Balance: BWP0.00"
+           style="-fx-font-size: 16; -fx-font-weight: bold; -fx-text-fill: #27ae60;"/>
+    <Region HBox.hgrow="ALWAYS"/>
+    <Button text="Refresh" onAction="#handleRefresh"
+            style="-fx-background-color: #3498db; -fx-text-fill: white; -fx-font-weight: bold;"/>
+  </HBox>
+
   <!-- Main Content -->
   <HBox spacing="20" VBox.vgrow="ALWAYS">
     <!-- Left Panel - Accounts List -->
     <VBox spacing="15" prefWidth="300">
       <Label text="My Accounts" style="-fx-font-size: 18; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
-      <ListView fx:id="accountsListView" VBox.vgrow="ALWAYS" onMouseClicked="#selectAccount"
+      <ListView fx:id="accountsListView" VBox.vgrow="ALWAYS"
                 style="-fx-border-color: #bdc3c7; -fx-border-radius: 5;"/>
       <Label fx:id="selectedAccountLabel" text="No account selected"
              style="-fx-text-fill: #7f8c8d; -fx-font-style: italic;"/>
@@ -52,15 +61,29 @@
         </HBox>
       </VBox>
 
-      <!-- Actions Section -->
-      <HBox spacing="10" alignment="CENTER">
-        <Button text="View Transactions" onAction="#handleViewTransactions"
-                style="-fx-background-color: #3498db; -fx-text-fill: white; -fx-font-weight: bold;"/>
-        <Button text="Open New Account" onAction="#handleOpenNewAccount"
-                style="-fx-background-color: #f39c12; -fx-text-fill: white; -fx-font-weight: bold;"/>
-        <Button text="Manage Profile" onAction="#handleManageProfile"
-                style="-fx-background-color: #9b59b6; -fx-text-fill: white; -fx-font-weight: bold;"/>
-      </HBox>
+      <!-- Quick Actions -->
+      <VBox spacing="10" style="-fx-background-color: #ecf0f1; -fx-padding: 15; -fx-background-radius: 10;">
+        <Label text="Quick Actions" style="-fx-font-size: 16; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
+        <HBox spacing="10" alignment="CENTER">
+          <Button text="View Transactions" onAction="#handleViewTransactions"
+                  style="-fx-background-color: #3498db; -fx-text-fill: white; -fx-font-weight: bold;"/>
+          <Button text="Open New Account" onAction="#handleOpenNewAccount"
+                  style="-fx-background-color: #f39c12; -fx-text-fill: white; -fx-font-weight: bold;"/>
+          <Button text="Manage Profile" onAction="#handleManageProfile"
+                  style="-fx-background-color: #9b59b6; -fx-text-fill: white; -fx-font-weight: bold;"/>
+        </HBox>
+      </VBox>
+
+      <!-- Account Summary -->
+      <VBox spacing="10" style="-fx-background-color: #34495e; -fx-padding: 15; -fx-background-radius: 10;">
+        <Label text="Account Summary" style="-fx-text-fill: white; -fx-font-size: 16; -fx-font-weight: bold;"/>
+        <Label text="• Select an account to perform transactions"
+               style="-fx-text-fill: #bdc3c7;"/>
+        <Label text="• Use Refresh to update account balances"
+               style="-fx-text-fill: #bdc3c7;"/>
+        <Label text="• New accounts will appear automatically"
+               style="-fx-text-fill: #bdc3c7;"/>
+      </VBox>
     </VBox>
   </HBox>
 </VBox>
