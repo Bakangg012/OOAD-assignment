@@ -1,5 +1,6 @@
 package com.example.demo;
 
+import com.example.demo.services.BankingServiceDAO; // CHANGE THIS IMPORT
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -8,6 +9,13 @@ import javafx.stage.Stage;
 import java.net.URL;
 
 public class Main extends Application {
+    // CHANGED THIS LINE - Use BankingServiceDAO instead of BankingService
+    private static BankingServiceDAO bankingService = new BankingServiceDAO();
+
+    // CHANGED THIS METHOD - Return BankingServiceDAO
+    public static BankingServiceDAO getBankingService() {
+        return bankingService;
+    }
 
     @Override
     public void start(Stage primaryStage) throws Exception {

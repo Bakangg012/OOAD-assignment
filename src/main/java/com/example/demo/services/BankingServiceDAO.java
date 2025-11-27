@@ -1,62 +1,53 @@
 package com.example.demo.services;
 
+import com.example.demo.database.CustomerDAO;
+import com.example.demo.database.DatabaseConnection;
+import com.example.demo.models.Customer;
 import com.example.demo.models.Account;
 import com.example.demo.models.SavingsAccount;
 import com.example.demo.models.InvestmentAccount;
 import com.example.demo.models.ChequeAccount;
-import com.example.demo.models.Customer;
 import com.example.demo.models.InsufficientFundsException;
-import java.util.ArrayList;
 import java.util.List;
-import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.util.ArrayList;
 
-public class BankingService {
-    private List<Customer> customers;
+public class BankingServiceDAO {
+    private CustomerDAO customerDAO;
     private List<Account> accounts;
-    private static final String DATA_FILE = "banking_data.ser";
 
-    public BankingService() {
-        this.customers = new ArrayList<>();
+    public BankingServiceDAO() {
+        // Initialize database and create tables
+        DatabaseConnection.initializeDatabase();
+        this.customerDAO = new CustomerDAO();
         this.accounts = new ArrayList<>();
-        loadData(); // Load existing data first
-        if (customers.isEmpty()) {
-            initializeSampleData(); // Only create sample data if no data exists
+
+        // Add sample data if no customers exist
+        if (customerDAO.getAllCustomers().isEmpty()) {
+            initializeSampleData();
         }
     }
 
-    // Customer management - UPDATED WITH PASSWORD
+    // Customer management
     public Customer createCustomer(String firstName, String surname, String address, String email, String phone, String password) {
         Customer customer = new Customer(firstName, surname, address, email, phone, password);
-        customers.add(customer);
-        saveData(); // Save after adding new customer
+        customerDAO.createCustomer(customer);
         return customer;
     }
 
-    // ADD THIS METHOD - For name-based login
     public Customer findCustomerByName(String fullName) {
-        for (Customer customer : getAllCustomers()) {
-            if (customer.getFullName().equalsIgnoreCase(fullName)) {
-                return customer;
-            }
-        }
-        return null;
+        return customerDAO.findCustomerByName(fullName);
     }
 
-    // Required by CustomerController
     public boolean updateCustomer(Customer customer) {
-        for (int i = 0; i < customers.size(); i++) {
-            if (customers.get(i).getCustomerId().equals(customer.getCustomerId())) {
-                customers.set(i, customer);
-                saveData(); // Save after update
-                return true;
-            }
-        }
-        return false;
+        customerDAO.updateCustomer(customer);
+        return true;
     }
 
-    // Account creation - USING YOUR EXACT CONSTRUCTORS
+    public List<Customer> getAllCustomers() {
+        return customerDAO.getAllCustomers();
+    }
+
+    // Account methods
     public Account openSavingsAccount(Customer customer, String branch, double initialDeposit) {
         Account account = new SavingsAccount(customer, branch);
         if (initialDeposit > 0) {
@@ -64,7 +55,6 @@ public class BankingService {
         }
         customer.addAccount(account);
         accounts.add(account);
-        saveData(); // Save after account creation
         return account;
     }
 
@@ -72,7 +62,6 @@ public class BankingService {
         Account account = new InvestmentAccount(customer, branch, initialDeposit);
         customer.addAccount(account);
         accounts.add(account);
-        saveData(); // Save after account creation
         return account;
     }
 
@@ -83,24 +72,16 @@ public class BankingService {
         }
         customer.addAccount(account);
         accounts.add(account);
-        saveData(); // Save after account creation
         return account;
     }
 
     // Transaction methods
     public void deposit(Account account, double amount) {
         account.deposit(amount);
-        saveData(); // Save after deposit
     }
 
     public void withdraw(Account account, double amount) throws InsufficientFundsException {
         account.withdraw(amount);
-        saveData(); // Save after withdrawal
-    }
-
-    // Getters
-    public List<Customer> getAllCustomers() {
-        return new ArrayList<>(customers);
     }
 
     public List<Account> getAllAccounts() {
@@ -111,7 +92,6 @@ public class BankingService {
         return customer.getAccounts();
     }
 
-    // Find customer by ID
     public Customer findCustomerById(String customerId) {
         for (Customer customer : getAllCustomers()) {
             if (customer.getCustomerId().equals(customerId)) {
@@ -121,7 +101,6 @@ public class BankingService {
         return null;
     }
 
-    // Process monthly interest
     public void processMonthlyInterest() {
         for (Account account : accounts) {
             if (account instanceof SavingsAccount || account instanceof InvestmentAccount) {
@@ -131,54 +110,23 @@ public class BankingService {
                 }
             }
         }
-        saveData(); // Save after processing interest
     }
 
-    // Initialize with sample data - UPDATED WITH PASSWORDS
     private void initializeSampleData() {
         try {
-            // Create sample customers WITH PASSWORDS
+            // Create sample customers
             Customer john = createCustomer("John", "Doe", "Gaborone", "john@email.com", "71123456", "password123");
             Customer jane = createCustomer("Jane", "Smith", "Francistown", "jane@email.com", "72123456", "password123");
 
-            // Create accounts using YOUR exact constructors
+            // Create sample accounts
             openSavingsAccount(john, "Main Branch", 1000.0);
             openInvestmentAccount(john, "Main Branch", 600.0);
             openChequeAccount(jane, "Francistown Branch", "ABC Company", "Francistown", 2000.0);
 
+            System.out.println("Sample data initialized successfully");
+
         } catch (Exception e) {
             System.out.println("Error initializing sample data: " + e.getMessage());
-        }
-    }
-
-    // Save data to file
-    private void saveData() {
-        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(DATA_FILE))) {
-            oos.writeObject(customers);
-            oos.writeObject(accounts);
-            System.out.println("Data saved successfully. Customers: " + customers.size() + ", Accounts: " + accounts.size());
-        } catch (IOException e) {
-            System.out.println("Error saving data: " + e.getMessage());
-        }
-    }
-
-    // Load data from file
-    @SuppressWarnings("unchecked")
-    private void loadData() {
-        if (!Files.exists(Paths.get(DATA_FILE))) {
-            System.out.println("No existing data file found. Starting fresh.");
-            return;
-        }
-
-        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(DATA_FILE))) {
-            customers = (List<Customer>) ois.readObject();
-            accounts = (List<Account>) ois.readObject();
-            System.out.println("Data loaded successfully. Customers: " + customers.size() + ", Accounts: " + accounts.size());
-        } catch (IOException | ClassNotFoundException e) {
-            System.out.println("Error loading data: " + e.getMessage());
-            // Start with empty lists if loading fails
-            customers = new ArrayList<>();
-            accounts = new ArrayList<>();
         }
     }
 

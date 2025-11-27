@@ -6,6 +6,7 @@
 <?import javafx.geometry.Insets?>
 
 <VBox xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.example.demo.controllers.DashboardController"
       prefHeight="600.0" prefWidth="800.0" spacing="20" style="-fx-padding: 20;">
 
   <!-- Header -->
@@ -14,7 +15,7 @@
     <Region HBox.hgrow="ALWAYS"/>
     <Label fx:id="welcomeLabel" text="Welcome, User!" style="-fx-text-fill: white;"/>
     <Label fx:id="customerInfoLabel" style="-fx-text-fill: white;"/>
-    <Button fx:id="logoutButton" text="Logout" onAction="#handleLogout"
+    <Button text="Logout" onAction="#handleLogout"
             style="-fx-background-color: #e74c3c; -fx-text-fill: white;"/>
   </HBox>
 

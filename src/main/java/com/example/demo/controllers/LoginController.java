@@ -1,6 +1,7 @@
 package com.example.demo.controllers;
 
-import com.example.demo.services.BankingService;
+import com.example.demo.Main;
+import com.example.demo.services.BankingServiceDAO;
 import com.example.demo.models.Customer;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -14,32 +15,32 @@ import java.io.IOException;
 
 public class LoginController {
 
-    @FXML private TextField customerIdField;
+    @FXML private TextField fullNameField;
     @FXML private PasswordField passwordField;
 
-    private BankingService bankingService = new BankingService();
+    private BankingServiceDAO bankingService = Main.getBankingService();
 
     @FXML
     private void handleLogin() {
-        String customerId = customerIdField.getText().trim();
+        String fullName = fullNameField.getText().trim();
+        String password = passwordField.getText().trim();
 
-        if (customerId.isEmpty()) {
-            showAlert("Error", "Please enter your Customer ID");
+        if (fullName.isEmpty() || password.isEmpty()) {
+            showAlert("Error", "Please enter both name and password");
             return;
         }
 
-        Customer customer = bankingService.findCustomerById(customerId);
+        Customer customer = bankingService.findCustomerByName(fullName);
 
-        if (customer != null) {
+        if (customer != null && customer.getPassword().equals(password)) {
             showDashboard(customer);
         } else {
-            showAlert("Error", "Customer ID not found. Please try CUST001, CUST002, etc.");
+            showAlert("Error", "Invalid name or password. Please try John Smith, Jane Doe, etc.");
         }
     }
 
     @FXML
     private void handleRegister() {
-        // CORRECTED PATH - Remove "/views/" from the path
         showScene("/com/example/demo/register.fxml", "Register New Customer");
     }
 
@@ -50,9 +51,9 @@ public class LoginController {
 
             DashboardController controller = loader.getController();
             controller.setCustomer(customer);
-            controller.setBankingService(bankingService);
+            // REMOVE THIS LINE: controller.setBankingService(bankingService);
 
-            Stage stage = (Stage) customerIdField.getScene().getWindow();
+            Stage stage = (Stage) fullNameField.getScene().getWindow();
             stage.setScene(new Scene(root, 800, 600));
             stage.setTitle("Bank Dashboard - " + customer.getFirstName());
 
@@ -64,12 +65,12 @@ public class LoginController {
     private void showScene(String fxmlPath, String title) {
         try {
             Parent root = FXMLLoader.load(getClass().getResource(fxmlPath));
-            Stage stage = (Stage) customerIdField.getScene().getWindow();
+            Stage stage = (Stage) fullNameField.getScene().getWindow();
             stage.setScene(new Scene(root, 800, 600));
             stage.setTitle(title);
         } catch (IOException e) {
             showAlert("Error", "Cannot load scene: " + e.getMessage());
-            e.printStackTrace(); // Add this for debugging
+            e.printStackTrace();
         }
     }
 

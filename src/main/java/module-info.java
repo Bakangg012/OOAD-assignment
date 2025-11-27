@@ -1,6 +1,7 @@
 module com.example.demo {
     requires javafx.controls;
     requires javafx.fxml;
+    requires java.sql; // ADD THIS LINE
 
     opens com.example.demo to javafx.fxml;
     opens com.example.demo.controllers to javafx.fxml;

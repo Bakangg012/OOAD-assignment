@@ -22,8 +22,9 @@
         <Label text="Login" style="-fx-font-size: 20; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
 
         <VBox spacing="10.0">
-          <Label text="Customer ID"/>
-          <TextField fx:id="customerIdField" promptText="Enter your Customer ID"/>
+          <!-- CHANGED: Customer ID to Full Name -->
+          <Label text="Full Name"/>
+          <TextField fx:id="fullNameField" promptText="Enter your full name"/>
 
           <Label text="Password"/>
           <PasswordField fx:id="passwordField" promptText="Enter password"/>

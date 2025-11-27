@@ -1,6 +1,7 @@
 package com.example.demo.controllers;
 
-import com.example.demo.services.BankingService;
+import com.example.demo.Main;
+import com.example.demo.services.BankingServiceDAO;
 import com.example.demo.models.Customer;
 import com.example.demo.models.Account;
 import com.example.demo.models.InsufficientFundsException;
@@ -27,16 +28,12 @@ public class DashboardController {
     @FXML private Label selectedAccountLabel;
 
     private Customer customer;
-    private BankingService bankingService;
+    private BankingServiceDAO bankingService = Main.getBankingService();
     private Account selectedAccount;
 
     public void setCustomer(Customer customer) {
         this.customer = customer;
         updateDisplay();
-    }
-
-    public void setBankingService(BankingService bankingService) {
-        this.bankingService = bankingService;
     }
 
     private void updateDisplay() {
@@ -131,7 +128,22 @@ public class DashboardController {
     @FXML
     private void handleViewTransactions() {
         if (selectedAccount != null) {
-            showAlert("Info", "Transaction history for " + selectedAccount.getAccountNumber() + " would appear here");
+            try {
+                // CORRECTED: Using transactions.fxml instead of TransactionView.fxml
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/demo/transactions.fxml"));
+                Parent root = loader.load();
+
+                // You'll need to create a TransactionsController that matches your FXML
+                // TransactionController controller = loader.getController();
+                // controller.setAccount(selectedAccount);
+
+                Stage stage = (Stage) welcomeLabel.getScene().getWindow();
+                stage.setScene(new Scene(root, 800, 600));
+                stage.setTitle("Transaction History - " + selectedAccount.getAccountNumber());
+            } catch (IOException e) {
+                e.printStackTrace();
+                showAlert("Error", "Cannot load transaction history: " + e.getMessage());
+            }
         } else {
             showAlert("Error", "Please select an account first");
         }
@@ -139,18 +151,66 @@ public class DashboardController {
 
     @FXML
     private void handleOpenNewAccount() {
-        showScene("/com/example/demo/views/NewAccountView.fxml", "Open New Account");
+        try {
+            // CORRECTED: Using new-account.fxml instead of NewAccountView.fxml
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/demo/new-account.fxml"));
+            Parent root = loader.load();
+
+            NewAccountController controller = loader.getController();
+            controller.setCustomer(customer);
+
+            Stage stage = (Stage) welcomeLabel.getScene().getWindow();
+            stage.setScene(new Scene(root, 800, 600));
+            stage.setTitle("Open New Account - " + customer.getFirstName());
+        } catch (IOException e) {
+            e.printStackTrace();
+            showAlert("Error", "Cannot load new account form: " + e.getMessage());
+        }
     }
 
     @FXML
     private void handleManageProfile() {
-        showScene("/com/example/demo/views/CustomerView.fxml", "Manage Profile");
+        try {
+            // CORRECTED: Using customer-profile.fxml instead of CustomerView.fxml
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/demo/customer-profile.fxml"));
+            Parent root = loader.load();
+
+            // You'll need to create a CustomerProfileController that matches your FXML
+            // CustomerController controller = loader.getController();
+            // controller.setCustomer(customer);
+
+            Stage stage = (Stage) welcomeLabel.getScene().getWindow();
+            stage.setScene(new Scene(root, 800, 600));
+            stage.setTitle("Manage Profile - " + customer.getFirstName());
+        } catch (IOException e) {
+            e.printStackTrace();
+            showAlert("Error", "Cannot load profile form: " + e.getMessage());
+        }
+    }
+
+    @FXML
+    private void handleViewAccounts() {
+        try {
+            // Using accounts.fxml for viewing all accounts
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/demo/accounts.fxml"));
+            Parent root = loader.load();
+
+            // You'll need to create an AccountsController
+            // AccountsController controller = loader.getController();
+            // controller.setCustomer(customer);
+
+            Stage stage = (Stage) welcomeLabel.getScene().getWindow();
+            stage.setScene(new Scene(root, 800, 600));
+            stage.setTitle("All Accounts - " + customer.getFirstName());
+        } catch (IOException e) {
+            e.printStackTrace();
+            showAlert("Error", "Cannot load accounts view: " + e.getMessage());
+        }
     }
 
     @FXML
     private void handleLogout() {
         try {
-            // Show logout confirmation
             Alert confirmAlert = new Alert(Alert.AlertType.CONFIRMATION);
             confirmAlert.setTitle("Logout");
             confirmAlert.setHeaderText("Are you sure you want to logout?");
@@ -158,8 +218,7 @@ public class DashboardController {
 
             Optional<ButtonType> result = confirmAlert.showAndWait();
             if (result.isPresent() && result.get() == ButtonType.OK) {
-                // Load login screen
-                Parent root = FXMLLoader.load(getClass().getResource("/com/example/demo/views/LoginView.fxml"));
+                Parent root = FXMLLoader.load(getClass().getResource("/com/example/demo/login.fxml"));
                 Stage stage = (Stage) welcomeLabel.getScene().getWindow();
                 stage.setScene(new Scene(root, 800, 600));
                 stage.setTitle("Banking System - Login");
@@ -168,17 +227,6 @@ public class DashboardController {
             }
         } catch (IOException e) {
             showAlert("Error", "Logout failed: " + e.getMessage());
-        }
-    }
-
-    private void showScene(String fxmlPath, String title) {
-        try {
-            Parent root = FXMLLoader.load(getClass().getResource(fxmlPath));
-            Stage stage = (Stage) welcomeLabel.getScene().getWindow();
-            stage.setScene(new Scene(root, 800, 600));
-            stage.setTitle(title);
-        } catch (IOException e) {
-            showAlert("Error", "Cannot load scene: " + e.getMessage());
         }
     }
 

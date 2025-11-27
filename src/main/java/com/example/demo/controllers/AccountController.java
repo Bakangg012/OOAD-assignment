@@ -1,6 +1,6 @@
 package com.example.demo.controllers;
 
-import com.example.demo.services.BankingService;
+import com.example.demo.services.BankingServiceDAO; // CHANGE IMPORT
 import com.example.demo.models.Account;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -20,10 +20,10 @@ public class AccountController {
     @FXML private Button backButton;
     @FXML private Button downloadStatementButton;
 
-    private BankingService bankingService;
+    private BankingServiceDAO bankingService; // CHANGE TYPE
     private Account account;
 
-    public void setBankingService(BankingService bankingService) {
+    public void setBankingService(BankingServiceDAO bankingService) { // CHANGE PARAMETER TYPE
         this.bankingService = bankingService;
     }
 

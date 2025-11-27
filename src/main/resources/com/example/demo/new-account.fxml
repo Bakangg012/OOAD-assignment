@@ -28,12 +28,12 @@
             <TextField fx:id="initialDepositField" GridPane.rowIndex="1" GridPane.columnIndex="1"
                        promptText="0.00"/>
 
-            <!-- Cheque Account Fields (initially hidden) -->
-            <Label text="Employer" GridPane.rowIndex="2" GridPane.columnIndex="0" visible="false"/>
+            <!-- Cheque Account Fields -->
+            <Label text="Employer" fx:id="employerLabel" GridPane.rowIndex="2" GridPane.columnIndex="0" visible="false"/>
             <TextField fx:id="employerField" GridPane.rowIndex="2" GridPane.columnIndex="1"
                        promptText="Employer name" visible="false"/>
 
-            <Label text="Company Address" GridPane.rowIndex="3" GridPane.columnIndex="0" visible="false"/>
+            <Label text="Company Address" fx:id="companyAddressLabel" GridPane.rowIndex="3" GridPane.columnIndex="0" visible="false"/>
             <TextField fx:id="companyAddressField" GridPane.rowIndex="3" GridPane.columnIndex="1"
                        promptText="Company address" visible="false"/>
         </GridPane>
@@ -45,13 +45,17 @@
             <Label text="• CHEQUE - Cheque account for business transactions" style="-fx-text-fill: #7f8c8d;"/>
         </VBox>
 
-        <HBox spacing="10.0" alignment="CENTER_RIGHT" style="-fx-padding: 20 0 0 0;">
-            <Button text="Back" onAction="#handleBack"
-                    style="-fx-background-color: transparent; -fx-text-fill: #7f8c8d;"/>
+        <!-- FIXED: Make Back button more visible and ensure it's properly placed -->
+        <HBox spacing="20.0" alignment="CENTER" style="-fx-padding: 30 0 0 0;">
+            <Button text="← Back to Dashboard" onAction="#handleBack"
+                    prefWidth="200" prefHeight="40"
+                    style="-fx-background-color: #95a5a6; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 14;"/>
+
             <Button text="Create Account" onAction="#handleOpenAccount"
-                    style="-fx-background-color: #27ae60; -fx-text-fill: white; -fx-font-weight: bold;"/>
+                    prefWidth="200" prefHeight="40"
+                    style="-fx-background-color: #27ae60; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 14;"/>
         </HBox>
 
-        <Label fx:id="messageLabel" style="-fx-text-fill: #e74c3c; -fx-wrap-text: true;" visible="false"/>
+        <Label fx:id="messageLabel" style="-fx-text-fill: #e74c3c; -fx-wrap-text: true; -fx-padding: 10 0 0 0;" visible="false"/>
     </VBox>
 </VBox>
